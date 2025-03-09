@@ -6,6 +6,7 @@ import com.bpkh.travel.dto.travel.TravelResponseDTO;
 import com.bpkh.travel.exception.DataNotFoundException;
 import com.bpkh.travel.exception.DuplicateNoPolisiException;
 import com.bpkh.travel.exception.DuplicateTravelNameException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +19,8 @@ import java.util.stream.Collectors;
 import org.springframework.data.jpa.domain.Specification;
 
 @Service
-@Transactional
+@Slf4j
+@Transactional(rollbackFor = Exception.class)
 public class TravelService {
 
     @Autowired
@@ -42,7 +44,8 @@ public class TravelService {
             travel = travelRepository.save(travel);
             return mapToResponse(travel);
         }catch (Exception e){
-            throw new RuntimeException(e.getMessage());
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -60,7 +63,8 @@ public class TravelService {
                     .orElseThrow(() -> new DataNotFoundException("Travel dengan ID " + id + " tidak ditemukan"));
             return mapToResponse(travel);
         }catch (Exception e){
-            throw new RuntimeException(e.getMessage());
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -75,7 +79,8 @@ public class TravelService {
             travel.setJenisBus(request.getJenisBus());
             return mapToResponse(travelRepository.save(travel));
         }catch (Exception e){
-            throw new RuntimeException(e.getMessage());
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -100,7 +105,8 @@ public class TravelService {
                     .map(this::mapToResponse)
                     .collect(Collectors.toList());
         }catch (Exception e){
-            throw new RuntimeException(e.getMessage());
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -123,7 +129,8 @@ public class TravelService {
                     (tiketList == null || tiketList.isEmpty()) ? null:tiketList
             );
         }catch (Exception e){
-            throw new RuntimeException(e.getMessage());
+            e.printStackTrace();
+            throw e;
         }
     }
     public List<TravelResponseDTO> filterTravels(String namaTravel, String noTelp, String alamat, String noPolisi, String jenisBus) {
@@ -134,7 +141,8 @@ public class TravelService {
                     .map(this::mapToResponse)
                     .collect(Collectors.toList());
         }catch (Exception e){
-            throw new RuntimeException(e.getMessage());
+            e.printStackTrace();
+            throw e;
         }
     }
 

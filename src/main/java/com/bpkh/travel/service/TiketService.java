@@ -10,6 +10,7 @@ import com.bpkh.travel.repository.PenumpangRepository;
 import com.bpkh.travel.repository.TiketRepository;
 import com.bpkh.travel.repository.TravelRepository;
 import jakarta.persistence.criteria.Predicate;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +22,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Slf4j
+@Transactional(rollbackFor = Exception.class)
 public class TiketService {
 
     @Autowired
@@ -44,8 +46,9 @@ public class TiketService {
             Tiket tiket = new Tiket(penumpang, travel, request.getJadwal());
             tiket = tiketRepository.save(tiket);
             return mapToResponse(tiket);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -62,8 +65,9 @@ public class TiketService {
             Tiket tiket = tiketRepository.findById(id)
                     .orElseThrow(() -> new DataNotFoundException("Tiket dengan ID " + id + " tidak ditemukan"));
             return mapToResponse(tiket);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -82,8 +86,9 @@ public class TiketService {
             tiket.setPenumpang(penumpang);
             tiket.setTravel(travel);
             return mapToResponse(tiketRepository.save(tiket));
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -92,8 +97,9 @@ public class TiketService {
             Tiket tiket = tiketRepository.findById(id)
                     .orElseThrow(() -> new DataNotFoundException("Tiket dengan ID " + id + " tidak ditemukan"));
             tiketRepository.delete(tiket);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -105,8 +111,9 @@ public class TiketService {
                     tiket.getTravel().getId(),
                     tiket.getJadwal()
             );
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -117,8 +124,9 @@ public class TiketService {
                     .stream()
                     .map(this::mapToResponse)
                     .collect(Collectors.toList());
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -160,8 +168,9 @@ public class TiketService {
 
                 return predicate;
             };
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
         }
     }
 }

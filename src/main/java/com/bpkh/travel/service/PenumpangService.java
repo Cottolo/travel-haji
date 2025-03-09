@@ -7,6 +7,7 @@ import com.bpkh.travel.entity.Penumpang;
 import com.bpkh.travel.exception.DataNotFoundException;
 import com.bpkh.travel.exception.DuplicatePhoneException;
 import com.bpkh.travel.repository.PenumpangRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +19,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
+@Slf4j
+@Transactional(rollbackFor = Exception.class)
 public class PenumpangService {
     @Autowired
     private PenumpangRepository penumpangRepository;
@@ -34,16 +36,18 @@ public class PenumpangService {
 
             penumpang = penumpangRepository.save(penumpang);
             return mapToResponse(penumpang);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
         }
     }
 
     public Page<PenumpangResponseDTO> getAllPenumpangs(Pageable pageable) {
         try {
             return penumpangRepository.findAll(pageable).map(this::mapToResponse);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -52,8 +56,9 @@ public class PenumpangService {
             Penumpang penumpang = penumpangRepository.findById(id)
                     .orElseThrow(() -> new DataNotFoundException("Penumpang dengan ID " + id + " tidak ditemukan"));
             return mapToResponse(penumpang);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -64,8 +69,9 @@ public class PenumpangService {
             penumpang.setNama(request.getNama());
             penumpang.setNoTelp(request.getNoTelp());
             return mapToResponse(penumpangRepository.save(penumpang));
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -74,8 +80,9 @@ public class PenumpangService {
             Penumpang penumpang = penumpangRepository.findById(id)
                     .orElseThrow(() -> new DataNotFoundException("Penumpang dengan ID " + id + " tidak ditemukan"));
             penumpangRepository.delete(penumpang);
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -94,8 +101,9 @@ public class PenumpangService {
                     penumpang.getNoTelp(),
                     (tiketList == null || tiketList.isEmpty()) ? null : tiketList
             );
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -106,8 +114,9 @@ public class PenumpangService {
                     .stream()
                     .map(this::mapToResponse)
                     .collect(Collectors.toList());
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
         }
     }
 
@@ -127,8 +136,9 @@ public class PenumpangService {
 
                 return spec.toPredicate(root, query, criteriaBuilder);
             };
-        } catch (RuntimeException e) {
-            throw new RuntimeException(e.getMessage());
+        }catch (Exception e){
+            e.printStackTrace();
+            throw e;
         }
     }
 }
