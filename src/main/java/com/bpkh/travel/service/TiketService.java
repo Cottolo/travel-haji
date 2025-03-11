@@ -85,6 +85,7 @@ public class TiketService {
             tiket.setIdPenumpang(request.getIdPenumpang());
             tiket.setPenumpang(penumpang);
             tiket.setTravel(travel);
+            tiket.setJadwal(request.getJadwal());
             return mapToResponse(tiketRepository.save(tiket));
         }catch (Exception e){
             e.printStackTrace();

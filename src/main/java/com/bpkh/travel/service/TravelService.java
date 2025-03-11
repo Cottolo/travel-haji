@@ -17,6 +17,7 @@ import com.bpkh.travel.repository.TravelRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.StringUtils;
 
 @Service
 @Slf4j
@@ -31,6 +32,49 @@ public class TravelService {
 
     public TravelResponseDTO createTravel(TravelRequestDTO request) {
         try {
+            String noPolisi = request.getNoPolisi();
+            String regex = "[,\\.\\s]";
+            String[] myArray = noPolisi.split(regex);
+            boolean isValid = false;
+            int i = 0;
+            for (String s : myArray) {
+                if(i==0){
+                    if (s.length()>2){
+                        throw new RuntimeException("Format No Polisi tidak sesuai.");
+                    }
+                    try{
+                        Integer.parseInt(s);
+                        isValid = false;
+                    }catch (Exception e){
+                        isValid = true;
+                    }
+                }
+                if(i==1){
+                    try{
+                        Integer.parseInt(s);
+                        isValid = true;
+                    }catch (Exception e){
+                        isValid = false;
+                    }
+                }
+                if(i==2){
+                    try{
+                        Integer.parseInt(s);
+                        isValid = false;
+                    }catch (Exception e){
+                        isValid = true;
+                    }
+                }
+                i++;
+                if (!isValid){
+                    throw new RuntimeException("Format No Polisi tidak sesuai.");
+                }
+            }
+
+            if (!isValid || i<2){
+                throw new RuntimeException("Format No Polisi tidak sesuai.");
+            }
+
             Travel travel = new Travel(null, request.getNamaTravel(), request.getNoTelp(),
                 request.getAlamat(), request.getNoPolisi(), request.getJenisBus(),null);
             if (travelRepository.existsByNamaTravel(request.getNamaTravel())) {
